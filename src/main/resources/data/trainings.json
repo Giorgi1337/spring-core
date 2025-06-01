@@ -1,0 +1,48 @@
+[
+  {
+    "trainee": {
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "username": "alice.johnson",
+      "password": "pass1234",
+      "isActive": true,
+      "dateOfBirth": "1990-05-15",
+      "address": "123 Main St, Cityville"
+    },
+    "trainer": {
+      "firstName": "Carlos",
+      "lastName": "Martinez",
+      "username": "carlos.martinez",
+      "password": "trainer001",
+      "isActive": true,
+      "specialization": "Cardio"
+    },
+    "trainingName": "Morning Cardio",
+    "trainingType": "Cardio",
+    "trainingDate": "2025-06-01",
+    "trainingDuration": 45
+  },
+  {
+    "trainee": {
+      "firstName": "Bob",
+      "lastName": "Smith",
+      "username": "bob.smith",
+      "password": "secret5678",
+      "isActive": true,
+      "dateOfBirth": "1988-09-30",
+      "address": "456 Oak Ave, Townsville"
+    },
+    "trainer": {
+      "firstName": "Diana",
+      "lastName": "Lee",
+      "username": "diana.lee",
+      "password": "trainer002",
+      "isActive": true,
+      "specialization": "Strength Training"
+    },
+    "trainingName": "Evening Strength",
+    "trainingType": "Strength Training",
+    "trainingDate": "2025-06-02",
+    "trainingDuration": 60
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "firstName": "Alice",
+    "lastName": "Johnson",
+    "username": "alice.johnson",
+    "password": "pass1234",
+    "isActive": true,
+    "dateOfBirth": "1990-05-15",
+    "address": "123 Main St, Cityville"
+  }
+
+]

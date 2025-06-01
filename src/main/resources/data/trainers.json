@@ -1,0 +1,18 @@
+[
+  {
+    "firstName": "Carlos",
+    "lastName": "Martinez",
+    "username": "carlos.martinez",
+    "password": "trainer001",
+    "isActive": true,
+    "specialization": "Cardio"
+  },
+  {
+    "firstName": "Diana",
+    "lastName": "Lee",
+    "username": "diana.lee",
+    "password": "trainer002",
+    "isActive": true,
+    "specialization": "Strength Training"
+  }
+]
