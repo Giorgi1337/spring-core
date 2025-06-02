@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+
+    <Properties>
+        <!-- Define log directory once for easy modification -->
+        <Property name="logDir">logs</Property>
+    </Properties>
+
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%-5level] %logger{36} - %msg%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5level] [%t] %logger{36} - %msg%n"/>
         </Console>
+
+        <RollingFile name="FileLogger"
+                     fileName="${logDir}/app.log"
+                     filePattern="${logDir}/app-%d{yyyy-MM-dd}.log.gz"
+                     immediateFlush="true">
+
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5level] [%t] %logger{36} - %msg%n"/>
+
+            <Policies>
+                <!-- Rotate log file if it grows bigger than 10MB or at midnight -->
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
     </Appenders>
+
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileLogger"/>
         </Root>
     </Loggers>
+
 </Configuration>
