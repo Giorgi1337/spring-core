@@ -40,6 +40,37 @@ public class TrainerServiceImplTest {
     }
 
     @Test
+    @DisplayName("Create Trainer should propagate exception thrown by DAO")
+    void createTrainerShouldPropagateDaoException() {
+        when(trainerDao.findById(anyString())).thenThrow(new RuntimeException("DAO failure"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            trainerService.createTrainer(sampleTrainer);
+        });
+
+        assertEquals("DAO failure", ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("Get Trainer by username should be case sensitive")
+    void getTrainerByUsernameIsCaseSensitive() {
+        when(trainerDao.findById("Jane.Smith")).thenReturn(sampleTrainer);
+        when(trainerDao.findById("jane.smith")).thenReturn(null);
+
+        Trainer foundUpper = trainerService.getTrainerByUsername("Jane.Smith");
+        Trainer foundLower = trainerService.getTrainerByUsername("jane.smith");
+
+        assertNotNull(foundUpper);
+        assertNull(foundLower);
+    }
+
+    @Test
+    @DisplayName("Create Trainer should throw NullPointerException if null passed")
+    void createTrainerNullInputThrowsException() {
+        assertThrows(NullPointerException.class, () -> trainerService.createTrainer(null));
+    }
+
+    @Test
     @DisplayName("Create Trainer should generate username from first and last name")
     void createTrainerShouldGenerateUsernameFromFirstAndLastName() {
         when(trainerDao.findById("Jane.Smith")).thenReturn(null);

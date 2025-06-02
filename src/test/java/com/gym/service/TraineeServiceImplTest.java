@@ -117,4 +117,32 @@ public class TraineeServiceImplTest {
         assertEquals("jane.smith", result.get(1).getUsername());
         verify(traineeDao).findAll();
     }
+
+    @Test
+    @DisplayName("Create trainee retries username generation if username exists")
+    void createTraineeRetriesUsernameIfExists() {
+        Trainee input = Trainee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+
+        when(traineeDao.findById(anyString()))
+                .thenReturn(new Trainee())
+                .thenReturn(null);
+
+        Trainee created = traineeService.createTrainee(input);
+
+        verify(traineeDao, atLeast(2)).findById(anyString());
+        verify(traineeDao).save(anyString(), eq(created));
+    }
+
+    @Test
+    @DisplayName("Create trainee with null input should throw NullPointerException")
+    void createTraineeNullInput() {
+        assertThrows(NullPointerException.class, () -> {
+            traineeService.createTrainee(null);
+        });
+    }
+
+
 }

@@ -53,11 +53,11 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     private String generateTrainingId(Training training) {
-        return String.format("Trainee:%s_Trainer:%s_Date:%s_Training:%s_%d",
+        return String.format("Trainee:%s_Trainer:%s_Date:%s_Training:%s_Duration:%dmin",
                 training.getTrainee().getUsername(),
                 training.getTrainer().getUsername(),
                 training.getTrainingDate().toString(),
                 training.getTrainingName().replaceAll("\\s+", "_"),
-                System.currentTimeMillis());
+                training.getTrainingDuration());
     }
 }
