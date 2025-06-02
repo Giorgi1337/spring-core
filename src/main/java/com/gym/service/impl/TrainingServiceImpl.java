@@ -25,10 +25,8 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public Training createTraining(Training training) {
         logger.info("Creating new training: {}", training.getTrainingName());
-
         String trainingId = generateTrainingId(training);
         trainingDao.save(trainingId, training);
-
         logger.info("Training created successfully with ID: {}", trainingId);
         return training;
     }
@@ -55,10 +53,11 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     private String generateTrainingId(Training training) {
-        return String.format("%s_%s_%s_%s",
+        return String.format("Trainee:%s_Trainer:%s_Date:%s_Training:%s_%d",
                 training.getTrainee().getUsername(),
                 training.getTrainer().getUsername(),
                 training.getTrainingDate().toString(),
-                training.getTrainingName().replaceAll("\\s+", "_"));
+                training.getTrainingName().replaceAll("\\s+", "_"),
+                System.currentTimeMillis());
     }
 }
