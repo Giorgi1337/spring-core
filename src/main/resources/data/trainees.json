@@ -2,11 +2,57 @@
   {
     "firstName": "Alice",
     "lastName": "Johnson",
-    "username": "alice.johnson",
-    "password": "pass1234",
     "isActive": true,
     "dateOfBirth": "1990-05-15",
     "address": "123 Main St, Cityville"
+  },
+  {
+    "firstName": "Anna",
+    "lastName": "Banna",
+    "isActive": true,
+    "dateOfBirth": "1992-07-22",
+    "address": "456 Oak Ave, Townsville"
+  },
+  {
+    "firstName": "Brian",
+    "lastName": "Smith",
+    "isActive": false,
+    "dateOfBirth": "1985-12-03",
+    "address": "789 Pine Rd, Villageton"
+  },
+  {
+    "firstName": "Catherine",
+    "lastName": "Lee",
+    "isActive": true,
+    "dateOfBirth": "1988-09-30",
+    "address": "101 Maple St, Hamletville"
+  },
+  {
+    "firstName": "David",
+    "lastName": "Kim",
+    "isActive": true,
+    "dateOfBirth": "1995-03-17",
+    "address": "202 Elm Blvd, Metrocity"
+  },
+  {
+    "firstName": "Eva",
+    "lastName": "Martinez",
+    "isActive": false,
+    "dateOfBirth": "1991-11-25",
+    "address": "303 Birch Ln, Suburbia"
+  },
+  {
+    "firstName": "Frank",
+    "lastName": "O’Connor",
+    "isActive": true,
+    "dateOfBirth": "1982-01-08",
+    "address": "404 Cedar Ct, Lakeview"
+  },
+  {
+    "firstName": "Grace",
+    "lastName": "Patel",
+    "isActive": true,
+    "dateOfBirth": "1993-06-12",
+    "address": "505 Spruce Dr, Hilltown"
   }
-
 ]

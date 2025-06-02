@@ -4,7 +4,6 @@
       "firstName": "Alice",
       "lastName": "Johnson",
       "username": "alice.johnson",
-      "password": "pass1234",
       "isActive": true,
       "dateOfBirth": "1990-05-15",
       "address": "123 Main St, Cityville"
@@ -13,7 +12,6 @@
       "firstName": "Carlos",
       "lastName": "Martinez",
       "username": "carlos.martinez",
-      "password": "trainer001",
       "isActive": true,
       "specialization": "Cardio"
     },
@@ -27,7 +25,6 @@
       "firstName": "Bob",
       "lastName": "Smith",
       "username": "bob.smith",
-      "password": "secret5678",
       "isActive": true,
       "dateOfBirth": "1988-09-30",
       "address": "456 Oak Ave, Townsville"
@@ -36,13 +33,75 @@
       "firstName": "Diana",
       "lastName": "Lee",
       "username": "diana.lee",
-      "password": "trainer002",
       "isActive": true,
       "specialization": "Strength Training"
     },
     "trainingName": "Evening Strength",
     "trainingType": "Strength Training",
     "trainingDate": "2025-06-02",
+    "trainingDuration": 60
+  },
+  {
+    "trainee": {
+      "firstName": "Emma",
+      "lastName": "White",
+      "username": "emma.white",
+      "isActive": true,
+      "dateOfBirth": "1995-11-12",
+      "address": "789 Pine Rd, Villageville"
+    },
+    "trainer": {
+      "firstName": "Michael",
+      "lastName": "Brown",
+      "username": "michael.brown",
+      "isActive": true,
+      "specialization": "Cardio Fitness"
+    },
+    "trainingName": "Cardio Blast",
+    "trainingType": "Cardio",
+    "trainingDate": "2025-06-03",
+    "trainingDuration": 50
+  },
+  {
+    "trainee": {
+      "firstName": "Lucas",
+      "lastName": "Green",
+      "username": "lucas.green",
+      "isActive": true,
+      "dateOfBirth": "1987-03-20",
+      "address": "234 Maple St, Townville"
+    },
+    "trainer": {
+      "firstName": "Laura",
+      "lastName": "Wilson",
+      "username": "laura.wilson",
+      "isActive": true,
+      "specialization": "Pilates"
+    },
+    "trainingName": "Pilates Fundamentals",
+    "trainingType": "Pilates",
+    "trainingDate": "2025-06-04",
+    "trainingDuration": 55
+  },
+  {
+    "trainee": {
+      "firstName": "Olivia",
+      "lastName": "King",
+      "username": "olivia.king",
+      "isActive": true,
+      "dateOfBirth": "1993-08-05",
+      "address": "567 Cedar Ln, Cityville"
+    },
+    "trainer": {
+      "firstName": "Emily",
+      "lastName": "Davis",
+      "username": "emily.davis",
+      "isActive": true,
+      "specialization": "Functional Training"
+    },
+    "trainingName": "Functional Strength",
+    "trainingType": "Strength Training",
+    "trainingDate": "2025-06-05",
     "trainingDuration": 60
   }
 ]
