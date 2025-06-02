@@ -7,13 +7,10 @@ import com.gym.dao.InMemoryDao;
 import com.gym.model.Trainee;
 import com.gym.model.Trainer;
 import com.gym.model.Training;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -29,17 +26,17 @@ public class AppConfig {
 
     @Bean
     public Map<String, Trainee> traineeStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
     public Map<String, Trainer> trainerStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
     public Map<String, Training> trainingStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
