@@ -1,25 +1,31 @@
 package com.gym.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "trainers")
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 @SuperBuilder
-public class Trainer extends User {
+public class Trainer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @JsonProperty("specialization")
+    @Column(name = "specialization")
     private String specialization;
 
-    @Override
-    public String toString() {
-        return String.format("Trainer [%s, Specialization: %s]",
-                super.toString(), specialization);
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Training> trainings = new HashSet<>();
 }
