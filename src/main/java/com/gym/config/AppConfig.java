@@ -1,57 +1,82 @@
 package com.gym.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gym.dao.Dao;
-import com.gym.dao.InMemoryDao;
-import com.gym.model.Trainee;
-import com.gym.model.Trainer;
-import com.gym.model.Training;
+import org.h2.tools.Server;
+import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = "com.gym")
+@EnableTransactionManagement
+@PropertySource("classpath:application.properties")
 public class AppConfig {
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
+    private final Environment env;
+
+    public AppConfig(Environment env) {
+        this.env = env;
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    public Server h2WebServer() throws SQLException {
+        return Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082");
     }
 
     @Bean
-    public Map<String, Trainee> traineeStorage() {
-        return new ConcurrentHashMap<>();
+    public DataSource dataSource() {
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName(env.getRequiredProperty("driver"));
+        ds.setUrl(env.getRequiredProperty("url"));
+        ds.setUsername(env.getRequiredProperty("username_value"));
+        ds.setPassword(env.getRequiredProperty("password"));
+        return ds;
     }
 
     @Bean
-    public Map<String, Trainer> trainerStorage() {
-        return new ConcurrentHashMap<>();
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan("com.gym.model");
+        sessionFactory.setHibernateProperties(hibernateProperties());
+        return sessionFactory;
     }
 
     @Bean
-    public Map<String, Training> trainingStorage() {
-        return new ConcurrentHashMap<>();
+    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+        return new HibernateTransactionManager(sessionFactory);
     }
 
     @Bean
-    public Dao<Trainee> traineeDao(Map<String, Trainee> traineeStorage) {
-        return new InMemoryDao<>(traineeStorage);
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
     }
 
     @Bean
-    public Dao<Trainer> trainerDao(Map<String, Trainer> trainerStorage) {
-        return new InMemoryDao<>(trainerStorage);
+    public LocalValidatorFactoryBean validator() {
+        return new LocalValidatorFactoryBean();
     }
 
     @Bean
-    public Dao<Training> trainingDao(Map<String, Training> trainingStorage) {
-        return new InMemoryDao<>(trainingStorage);
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
     }
 
+    private Properties hibernateProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
+        properties.put("hibernate.show_sql", env.getRequiredProperty("show-sql"));
+        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("ddl-auto"));
+        return properties;
+    }
 }
