@@ -42,6 +42,36 @@ public class TraineeServiceImpl implements TraineeService {
         return authenticateAndGet(username, password);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Trainee findByUsername(String username, String password) {
+        return authenticateAndGet(username, password);
+    }
+
+    @Override
+    public void changePassword(String username, String oldPassword, String newPassword) {
+        Trainee trainee = authenticateAndGet(username, oldPassword);
+        trainee.getUser().setPassword(newPassword);
+        traineeDao.update(trainee);
+
+        logger.info("[TRAINEE] Password changed successfully for: {}", username);
+    }
+
+    @Override
+    public Trainee updateTrainee(String username, String password, Trainee updatedTrainee) {
+        Trainee existing = authenticateAndGet(username, password);
+
+        userService.updateUserDetails(existing.getUser(), updatedTrainee.getUser());
+
+        existing.setAddress(updatedTrainee.getAddress());
+        existing.setDateOfBirth(updatedTrainee.getDateOfBirth());
+
+        traineeDao.update(existing);
+
+        logger.info("[TRAINEE] Updated profile for: {}", existing.getUser().getUsername());
+        return existing;
+    }
+
     private Trainee authenticateAndGet(String username, String password) {
         Trainee trainee = traineeDao.findByUsername(username)
                 .orElseThrow(() -> {

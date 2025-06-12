@@ -42,6 +42,35 @@ public class TrainerServiceImpl implements TrainerService {
         return authenticateAndGet(username, password);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Trainer findByUsername(String username, String password) {
+        return authenticateAndGet(username, password);
+    }
+
+    @Override
+    public void changePassword(String username, String oldPassword, String newPassword) {
+        Trainer trainer = authenticateAndGet(username, oldPassword);
+        trainer.getUser().setPassword(newPassword);
+        trainerDao.update(trainer);
+
+        logger.info("[TRAINER] Password changed successfully for: {}", username);
+    }
+
+    @Override
+    public Trainer updateTrainer(String username, String password, Trainer updatedTrainer) {
+        Trainer existing = authenticateAndGet(username, password);
+
+        userService.updateUserDetails(existing.getUser(), updatedTrainer.getUser());
+
+        existing.setSpecialization(updatedTrainer.getSpecialization());
+
+        trainerDao.update(existing);
+
+        logger.info("[TRAINER] Updated profile for: {}", existing.getUser().getUsername());
+        return existing;
+    }
+
     private Trainer authenticateAndGet(String username, String password) {
         Trainer trainer = trainerDao.findByUsername(username)
                 .orElseThrow(() -> {
