@@ -1,12 +1,9 @@
 package com.gym.service;
 
 import com.gym.model.Trainer;
-
-import java.util.List;
+import jakarta.validation.Valid;
 
 public interface TrainerService {
-    Trainer createTrainer(Trainer trainer);
-    Trainer updateTrainer(Trainer trainer);
-    List<Trainer> getAllTrainers();
-    Trainer getTrainerByUsername(String username);
+    Trainer createTrainer(@Valid Trainer trainer);
+    Trainer authenticateTrainer(String username, String password);
 }

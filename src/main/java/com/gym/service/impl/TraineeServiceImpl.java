@@ -1,65 +1,61 @@
 package com.gym.service.impl;
 
-import com.gym.dao.Dao;
+import com.gym.dao.TraineeDao;
+import com.gym.exception.AuthenticationException;
+import com.gym.exception.TraineeNotFoundException;
 import com.gym.model.Trainee;
 import com.gym.service.TraineeService;
-import com.gym.util.UserUtils;
+import com.gym.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
+@Validated
 public class TraineeServiceImpl implements TraineeService {
-
     private static final Logger logger = LogManager.getLogger(TraineeServiceImpl.class);
 
-    private Dao<Trainee> traineeDao;
-
-    @Autowired
-    public void setTraineeDao(Dao<Trainee> traineeDao) {
-        this.traineeDao = traineeDao;
-    }
+    private final UserService userService;
+    private final TraineeDao traineeDao;
 
     @Override
     public Trainee createTrainee(Trainee trainee) {
-        return UserUtils.setupNewUser(trainee, traineeDao, "trainee");
-    }
+        logger.info("[TRAINEE] Creating new trainee: {} {}",
+                trainee.getUser().getFirstName(), trainee.getUser().getLastName());
 
-    @Override
-    public Trainee updateTrainee(Trainee trainee) {
-        logger.info("Updating trainee with username: {}", trainee.getUsername());
-        traineeDao.save(trainee.getUsername(), trainee);
-        logger.info("Trainee updated successfully: {}", trainee.getUsername());
+        userService.setupNewUser(trainee.getUser());
+        traineeDao.save(trainee);
+
+        logger.info("[TRAINEE] Created trainee with username: {}", trainee.getUser().getUsername());
         return trainee;
     }
 
     @Override
-    public void deleteTrainee(String username) {
-        logger.info("Deleting trainee with username: {}", username);
-        traineeDao.delete(username);
-        logger.info("Trainee deleted successfully: {}", username);
+    @Transactional(readOnly = true)
+    public Trainee authenticateTrainee(String username, String password) {
+        return authenticateAndGet(username, password);
     }
 
-    @Override
-    public Trainee getTraineeByUsername(String username) {
-        logger.info("Retrieving trainee with username: {}", username);
-        Trainee trainee = traineeDao.findById(username);
-        if (trainee != null)
-            logger.info("Trainee found: {}", username);
-        else
-            logger.info("Trainee not found: {}", username);
+    private Trainee authenticateAndGet(String username, String password) {
+        Trainee trainee = traineeDao.findByUsername(username)
+                .orElseThrow(() -> {
+                    logger.warn("[TRAINEE] No trainee found for username: {}", username);
+                    return new TraineeNotFoundException("Trainee with username " + username + " not found");
+                });
 
+        if (trainee.getUser() == null || !password.equals(trainee.getUser().getPassword())) {
+            logger.warn("[TRAINEE] Authentication failed for: {}", username);
+            throw new AuthenticationException("Invalid username or password");
+        }
+
+        logger.info("[TRAINEE] Authenticated: {}", username);
         return trainee;
     }
 
-    @Override
-    public List<Trainee> getAllTrainees() {
-        logger.info("Retrieving all trainees");
-        List<Trainee> trainees = traineeDao.findAll();
-        logger.info("Retrieved {} trainees", trainees.size());
-        return trainees;
-    }
 }

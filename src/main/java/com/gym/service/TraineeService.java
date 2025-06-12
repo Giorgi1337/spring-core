@@ -1,13 +1,9 @@
 package com.gym.service;
 
 import com.gym.model.Trainee;
-
-import java.util.List;
+import jakarta.validation.Valid;
 
 public interface TraineeService {
-    Trainee createTrainee(Trainee trainee);
-    Trainee updateTrainee(Trainee trainee);
-    void deleteTrainee(String username);
-    Trainee getTraineeByUsername(String username);
-    List<Trainee> getAllTrainees();
+    Trainee createTrainee(@Valid Trainee trainee);
+    Trainee authenticateTrainee(String username, String password);
 }
