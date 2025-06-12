@@ -71,6 +71,28 @@ public class TrainerServiceImpl implements TrainerService {
         return existing;
     }
 
+    @Override
+    public Trainer toggleTrainerActiveStatus(String username, String password) {
+        Trainer trainer = authenticateAndGet(username, password);
+
+        boolean newStatus = !Boolean.TRUE.equals(trainer.getUser().getIsActive());
+        trainer.getUser().setIsActive(newStatus);
+
+        trainerDao.update(trainer);
+        logger.info("[TRAINER] Toggled active status to {} for: {}", newStatus, username);
+
+        return trainer;
+    }
+
+    @Override
+    public Trainer deleteTrainer(String username, String password) {
+        Trainer trainer = authenticateAndGet(username, password);
+        trainerDao.delete(trainer);
+
+        logger.info("[TRAINER] Deleted trainer with username: {}", username);
+        return trainer;
+    }
+
     private Trainer authenticateAndGet(String username, String password) {
         Trainer trainer = trainerDao.findByUsername(username)
                 .orElseThrow(() -> {

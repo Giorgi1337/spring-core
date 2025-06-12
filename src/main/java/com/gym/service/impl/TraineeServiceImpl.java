@@ -72,6 +72,28 @@ public class TraineeServiceImpl implements TraineeService {
         return existing;
     }
 
+    @Override
+    public Trainee toggleTraineeActiveStatus(String username, String password) {
+        Trainee trainee = authenticateAndGet(username, password);
+
+        boolean newStatus = !Boolean.TRUE.equals(trainee.getUser().getIsActive());
+        trainee.getUser().setIsActive(newStatus);
+
+        traineeDao.update(trainee);
+        logger.info("[TRAINEE] Toggled active status to {} for: {}", newStatus, username);
+
+        return trainee;
+    }
+
+    @Override
+    public Trainee deleteTrainee(String username, String password) {
+        Trainee trainee = authenticateAndGet(username, password);
+        traineeDao.delete(trainee);
+
+        logger.info("[TRAINEE] Deleted trainee with username: {}", username);
+        return trainee;
+    }
+
     private Trainee authenticateAndGet(String username, String password) {
         Trainee trainee = traineeDao.findByUsername(username)
                 .orElseThrow(() -> {

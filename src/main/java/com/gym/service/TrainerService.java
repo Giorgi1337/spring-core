@@ -9,4 +9,6 @@ public interface TrainerService {
     Trainer findByUsername(String username, String password);
     void changePassword(String username, String oldPassword, String newPassword);
     Trainer updateTrainer(String username, String password, @Valid Trainer updatedTrainer);
+    Trainer toggleTrainerActiveStatus(String username, String password);
+    Trainer deleteTrainer(String username, String password);
 }

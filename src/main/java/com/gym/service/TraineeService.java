@@ -9,4 +9,6 @@ public interface TraineeService {
     Trainee findByUsername(String username, String password);
     void changePassword(String username, String oldPassword, String newPassword);
     Trainee updateTrainee(String username, String password,@Valid Trainee updatedTrainee);
+    Trainee toggleTraineeActiveStatus(String username, String password);
+    Trainee deleteTrainee(String username, String password);
 }
