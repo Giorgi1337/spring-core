@@ -5,7 +5,7 @@ import org.hibernate.SessionFactory;
 
 import java.util.List;
 
-public abstract class AbstractDao<T> {
+public abstract class AbstractDao<T, ID> {
 
     protected final SessionFactory sessionFactory;
     private final Class<T> clazz;
@@ -15,7 +15,7 @@ public abstract class AbstractDao<T> {
         this.clazz = clazz;
     }
 
-    public T findById(Long id) {
+    public T findById(ID id) {
         return getSession().find(clazz, id);
     }
 

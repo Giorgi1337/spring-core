@@ -28,4 +28,7 @@ public class Trainer {
 
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Training> trainings = new HashSet<>();
+
+    @ManyToMany(mappedBy = "trainers")
+    private Set<Trainee> trainees = new HashSet<>();
 }

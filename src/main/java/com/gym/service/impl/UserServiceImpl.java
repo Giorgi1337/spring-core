@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
             counter++;
         }
 
-        logger.info("[UserService] Generated unique username: {}", username);
+        logger.info("[USER_SERVICE] [USERNAME_GENERATION] Generated unique username: {}", username);
         return username;
     }
 
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
             password.append(CHARACTERS.charAt(index));
         }
 
-        logger.info("[UserService] Password generated");
+        logger.info("[USER_SERVICE] [PASSWORD_GENERATION] Random password generated");
         return password.toString();
     }
 
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         user.setIsActive(true);
 
-        logger.info("[UserService] User initialized: username = {}, fullName ='{} {}'",
+        logger.info("[USER_SERVICE] [SETUP] Initialized user: username={}, fullName='{} {}'",
                 username, user.getFirstName(), user.getLastName());
     }
 
@@ -74,6 +74,6 @@ public class UserServiceImpl implements UserService {
         existingUser.setUsername(newUsername);
         existingUser.setIsActive(updatedUser.getIsActive());
 
-        logger.info("[UserService] Updated user details: newUsername = {}", newUsername);
+        logger.info("[USER_SERVICE] [UPDATE] Updated user details: newUsername={}", newUsername);
     }
 }
