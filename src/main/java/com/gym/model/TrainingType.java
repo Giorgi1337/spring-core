@@ -1,38 +1,26 @@
 package com.gym.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
-public enum TrainingType {
-    CARDIO("Cardio"),
-    STRENGTH("Strength Training"),
-    YOGA("Yoga"),
-    PILATES("Pilates"),
-    CROSSFIT("CrossFit"),
-    BOXING("Boxing"),
-    POWERLIFTING("Powerlifting");
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "training_types")
+@Builder
+public class TrainingType {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String type;
+    @Column(name = "training_type_name", nullable = false, unique = true)
+    private String trainingTypeName;
 
-    TrainingType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return type;
-    }
-
-    @JsonCreator
-    public static TrainingType fromType(String type) {
-        return Arrays.stream(values())
-                .filter(t -> t.getType().equalsIgnoreCase(type))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown training type: " + type));
-    }
+    @OneToMany(mappedBy = "trainingType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Training> trainings = new HashSet<>();
 }
