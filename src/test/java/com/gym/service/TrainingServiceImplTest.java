@@ -1,112 +1,164 @@
-//package com.gym.service;
-//
-//import com.gym.model.Trainer;
-//import com.gym.model.Trainee;
-//import com.gym.model.Training;
-//import com.gym.service.impl.TrainingServiceImpl;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.ArgumentCaptor;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.time.LocalDate;
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//public class TrainingServiceImplTest {
-//
-//    @Mock
-//    private Dao<Training> trainingDao;
-//
-//    @InjectMocks
-//    private TrainingServiceImpl trainingService;
-//
-//    private Trainee sampleTrainee;
-//    private Trainer sampleTrainer;
-//    private Training sampleTraining;
-//
-//    @BeforeEach
-//    void setup() {
-//        sampleTrainee = Trainee.builder()
-//                .username("John.Doe")
-//                .firstName("John")
-//                .lastName("Doe")
-//                .build();
-//
-//        sampleTrainer = Trainer.builder()
-//                .username("Jane.Smith")
-//                .firstName("Jane")
-//                .lastName("Smith")
-//                .build();
-//
-//        sampleTraining = Training.builder()
-//                .trainee(sampleTrainee)
-//                .trainer(sampleTrainer)
-//                .trainingName("Morning Cardio")
-//                .trainingDate(LocalDate.of(2025, 6, 3))
-//                .trainingDuration(60)
-//                .build();
-//    }
-//
-//    @Test
-//    @DisplayName("Create training should save training with generated ID and return the training")
-//    void createTrainingShouldSaveTrainingWithGeneratedId() {
-//        Training created = trainingService.createTraining(sampleTraining);
-//
-//        // Capture argument used for save key
-//        ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
-//        verify(trainingDao).save(idCaptor.capture(), eq(sampleTraining));
-//
-//        String expectedId = "Trainee:John.Doe_Trainer:Jane.Smith_Date:2025-06-03_Training:Morning_Cardio_Duration:60min";
-//        assertEquals(expectedId, idCaptor.getValue());
-//        assertSame(sampleTraining, created);
-//    }
-//
-//    @Test
-//    @DisplayName("Select training by ID should return training if found")
-//    void selectTrainingByIdShouldReturnTrainingIfFound() {
-//        String trainingId = "someTrainingId";
-//        when(trainingDao.findById(trainingId)).thenReturn(sampleTraining);
-//
-//        Training found = trainingService.selectTrainingById(trainingId);
-//
-//        assertNotNull(found);
-//        assertEquals(sampleTraining, found);
-//        verify(trainingDao).findById(trainingId);
-//    }
-//
-//    @Test
-//    @DisplayName("Select training by ID should return null if training not found")
-//    void selectTrainingByIdShouldReturnNullIfNotFound() {
-//        String trainingId = "nonexistentId";
-//        when(trainingDao.findById(trainingId)).thenReturn(null);
-//
-//        Training found = trainingService.selectTrainingById(trainingId);
-//
-//        assertNull(found);
-//        verify(trainingDao).findById(trainingId);
-//    }
-//
-//    @Test
-//    @DisplayName("Select all trainings should return list of all trainings")
-//    void selectAllTrainingsShouldReturnAllTrainings() {
-//        List<Training> trainings = List.of(
-//                sampleTraining,
-//                Training.builder().trainingName("Evening Strength").build()
-//        );
-//        when(trainingDao.findAll()).thenReturn(trainings);
-//
-//        List<Training> result = trainingService.selectAllTrainings();
-//
-//        assertEquals(2, result.size());
-//        assertTrue(result.contains(sampleTraining));
-//        verify(trainingDao).findAll();
-//    }
-//}
+package com.gym.service;
+
+import com.gym.dao.TraineeDao;
+import com.gym.dao.TrainerDao;
+import com.gym.dao.TrainingDao;
+import com.gym.dao.TrainingTypeDao;
+import com.gym.exception.AuthenticationException;
+import com.gym.exception.TraineeNotFoundException;
+import com.gym.exception.TrainerNotFoundException;
+import com.gym.exception.TrainingTypeNotFoundException;
+import com.gym.model.*;
+import com.gym.service.impl.TrainingServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("TrainingServiceImpl Tests")
+public class TrainingServiceImplTest {
+
+    @Mock
+    private TrainingDao trainingDao;
+    @Mock
+    private TraineeDao traineeDao;
+    @Mock
+    private TrainerDao trainerDao;
+    @Mock
+    private TrainingTypeDao trainingTypeDao;
+
+    @InjectMocks
+    private TrainingServiceImpl trainingService;
+
+    private User traineeUser;
+    private User trainerUser;
+    private Trainee trainee;
+    private Trainer trainer;
+    private TrainingType trainingType;
+    private Training training;
+
+    @BeforeEach
+    void setup() {
+        traineeUser = User.builder()
+                .username("trainee1")
+                .password("traineePass")
+                .firstName("Ana")
+                .lastName("Smith")
+                .isActive(true)
+                .build();
+
+        trainerUser = User.builder()
+                .username("trainer1")
+                .password("trainerPass")
+                .firstName("Bob")
+                .lastName("Strong")
+                .isActive(true)
+                .build();
+
+        trainee = Trainee.builder()
+                .user(traineeUser)
+                .trainers(new HashSet<>())
+                .trainings(new HashSet<>())
+                .build();
+
+        trainer = Trainer.builder()
+                .user(trainerUser)
+                .trainees(new HashSet<>())
+                .trainings(new HashSet<>())
+                .build();
+
+        trainingType = TrainingType.builder()
+                .id(1L)
+                .trainingTypeName("Cardio")
+                .build();
+
+        training = Training.builder()
+                .trainingName("Morning Cardio")
+                .trainingDate(LocalDateTime.now())
+                .trainingDuration(45)
+                .trainingType(trainingType)
+                .build();
+    }
+
+    @Test
+    @DisplayName("Add training success and links all relationships")
+    void addTrainingSuccess() {
+        when(traineeDao.findByUsername("trainee1")).thenReturn(Optional.of(trainee));
+        when(trainerDao.findByUsername("trainer1")).thenReturn(Optional.of(trainer));
+        when(trainingTypeDao.findByTrainingTypeName("Cardio")).thenReturn(Optional.of(trainingType));
+
+        Training result = trainingService.addTraining("trainee1", "traineePass", "trainer1", "trainerPass", training);
+
+        verify(trainingDao).save(training);
+        assertEquals(trainee, result.getTrainee());
+        assertEquals(trainer, result.getTrainer());
+        assertEquals(trainingType, result.getTrainingType());
+        assertTrue(trainee.getTrainings().contains(training));
+        assertTrue(trainer.getTrainings().contains(training));
+        assertTrue(trainee.getTrainers().contains(trainer));
+        assertTrue(trainer.getTrainees().contains(trainee));
+    }
+
+    @Test
+    @DisplayName("Add training throws when trainee not found")
+    void addTrainingTraineeNotFound() {
+        when(traineeDao.findByUsername("trainee1")).thenReturn(Optional.empty());
+
+        assertThrows(TraineeNotFoundException.class,
+                () -> trainingService.addTraining("trainee1", "traineePass", "trainer1", "trainerPass", training));
+    }
+
+    @Test
+    @DisplayName("Add training throws on invalid trainee password")
+    void addTrainingInvalidTraineePassword() {
+        traineeUser.setPassword("correctPass");
+        when(traineeDao.findByUsername("trainee1")).thenReturn(Optional.of(trainee));
+
+        assertThrows(AuthenticationException.class,
+                () -> trainingService.addTraining("trainee1", "wrongPass", "trainer1", "trainerPass", training));
+    }
+
+    @Test
+    @DisplayName("Add training throws when trainer not found")
+    void addTrainingTrainerNotFound() {
+        when(traineeDao.findByUsername("trainee1")).thenReturn(Optional.of(trainee));
+        when(trainerDao.findByUsername("trainer1")).thenReturn(Optional.empty());
+
+        assertThrows(TrainerNotFoundException.class,
+                () -> trainingService.addTraining("trainee1", "traineePass", "trainer1", "trainerPass", training));
+    }
+
+    @Test
+    @DisplayName("Add training throws on invalid trainer password")
+    void addTrainingInvalidTrainerPassword() {
+        when(traineeDao.findByUsername("trainee1")).thenReturn(Optional.of(trainee));
+        when(trainerDao.findByUsername("trainer1")).thenReturn(Optional.of(trainer));
+        trainerUser.setPassword("correctPass");
+
+        assertThrows(AuthenticationException.class,
+                () -> trainingService.addTraining("trainee1", "traineePass", "trainer1", "wrongPass", training));
+    }
+
+    @Test
+    @DisplayName("Add training throws when training type not found")
+    void addTrainingTrainingTypeNotFound() {
+        when(traineeDao.findByUsername("trainee1")).thenReturn(Optional.of(trainee));
+        when(trainerDao.findByUsername("trainer1")).thenReturn(Optional.of(trainer));
+        when(trainingTypeDao.findByTrainingTypeName("Cardio")).thenReturn(Optional.empty());
+
+        assertThrows(TrainingTypeNotFoundException.class,
+                () -> trainingService.addTraining("trainee1", "traineePass", "trainer1", "trainerPass", training));
+    }
+}

@@ -4,8 +4,11 @@ import org.h2.tools.Server;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -42,6 +45,18 @@ public class AppConfig {
         ds.setPassword(env.getRequiredProperty("password"));
         return ds;
     }
+
+//    @Bean
+//    public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+//        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//        populator.addScript(new ClassPathResource("init.sql"));
+//        populator.setContinueOnError(false);
+//
+//        DataSourceInitializer initializer = new DataSourceInitializer();
+//        initializer.setDataSource(dataSource);
+//        initializer.setDatabasePopulator(populator);
+//        return initializer;
+//    }
 
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
