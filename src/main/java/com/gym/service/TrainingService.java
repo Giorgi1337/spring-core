@@ -1,11 +1,14 @@
 package com.gym.service;
 
 import com.gym.model.Training;
-
-import java.util.List;
+import jakarta.validation.Valid;
 
 public interface TrainingService {
-    Training createTraining(Training training);
-    Training selectTrainingById(String trainingId);
-    List<Training> selectAllTrainings();
+    Training addTraining(
+            String traineeUsername,
+            String traineePassword,
+            String trainerUsername,
+            String trainerPassword,
+            @Valid Training training
+    );
 }
